@@ -1,6 +1,3 @@
-eval %sh{kak-lsp}
-lsp-enable
-
 # Set the colour scheme
 colorscheme lucius
 
@@ -28,4 +25,39 @@ add-highlighter global/ wrap -word -indent
 # Clipboard management mappings
 map -docstring "yank the selection into the clipboard" global user y "<a-|> xsel -i<ret>"
 map -docstring "paste the clipboard" global user p "<a-!> xsel<ret>"
+
+# LSP config
+eval %sh{kak-lsp}
+# enable to get debug output in *debug*
+set global lsp_debug true
+lsp-enable
+
+# Recommended LSP keymaps
+map global user l ':enter-user-mode lsp<ret>' -docstring 'LSP mode'
+map global insert <tab> '<a-;>:try lsp-snippets-select-next-placeholders catch %{ execute-keys -with-hooks <lt>tab> }<ret>' -docstring 'Select next snippet placeholder'
+map global object a '<a-semicolon>lsp-object<ret>' -docstring 'LSP any symbol'
+map global object <a-a> '<a-semicolon>lsp-object<ret>' -docstring 'LSP any symbol'
+map global object f '<a-semicolon>lsp-object Function Method<ret>' -docstring 'LSP function or method'
+map global object t '<a-semicolon>lsp-object Class Interface Struct<ret>' -docstring 'LSP class interface or struct'
+map global object d '<a-semicolon>lsp-diagnostic-object --include-warnings<ret>' -docstring 'LSP errors and warnings'
+map global object D '<a-semicolon>lsp-diagnostic-object<ret>' -docstring 'LSP errors'
+
+# Enable Odin LSP
+# TODO - replace hardcoded odin paths with $ODIN_ROOT
+hook -group lsp-filetype-odin global BufSetOption filetype=(?:odin) %{
+    set-option buffer lsp_servers %{
+        [ols]
+        root_globs = [".git"]
+        settings_section = "ols"
+    	[[ols.settings.ols.collections]]
+    	name = "core"
+		path = "/home/matt/code/odin-linux-amd64-nightly+2025-06-02/core"
+		[[ols.settings.ols.collections]]
+		name = "vendor"
+		path = "/home/matt/code/odin-linux-amd64-nightly+2025-06-02/vendor"
+		[[ols.settings.ols.collections]]
+		name = "base"
+		path = "/home/matt/code/odin-linux-amd64-nightly+2025-06-02/base"
+    }
+}
 
