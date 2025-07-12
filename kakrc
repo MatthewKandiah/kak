@@ -1,3 +1,6 @@
+eval %sh{kak-lsp}
+lsp-enable
+
 # Set the colour scheme
 colorscheme lucius
 
