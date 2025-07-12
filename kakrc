@@ -26,6 +26,10 @@ add-highlighter global/ wrap -word -indent
 map -docstring "yank the selection into the clipboard" global user y "<a-|> xsel -i<ret>"
 map -docstring "paste the clipboard" global user p "<a-!> xsel<ret>"
 
+# Convenient vertical navigation mappings
+map -docstring "jump down by paragraph" global normal ) "]p;"
+map -docstring "jump up by paragraph" global normal ( "[pk"
+
 # LSP config
 eval %sh{kak-lsp}
 # enable to get debug output in *debug*
