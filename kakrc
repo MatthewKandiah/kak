@@ -30,6 +30,14 @@ map -docstring "paste the clipboard" global user p "<a-!> xsel<ret>"
 map -docstring "jump down by paragraph" global normal ) "]p;"
 map -docstring "jump up by paragraph" global normal ( "[pk"
 
+# mawww's find function
+define-command find -params 1 %{ edit %arg{1} }
+complete-command -menu find shell-script-candidates %{ fd }
+map -docstring "fuzzy find files" global user f ":find<space>"
+
+# disable insert hooks to stop it auto-commenting lines
+set-option global disabled_hooks .*-insert
+
 # LSP config
 eval %sh{kak-lsp}
 # enable to get debug output in *debug*
