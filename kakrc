@@ -37,10 +37,10 @@ map -docstring "fuzzy find files" global user f ":find<space>"
 
 # grep and dump to scratch buffer
 define-command search -params 1 %{
-    echo %sh{echo "search term: $1"}
-    set-register | %sh{ grep -r $1 --line-number }
+    set-register / %sh{ echo $1 }
+    set-register | %sh{ grep -r --exclude-dir='.*' $1 --line-number }
     edit -scratch *grep-output*
-    exec '%d"|p;'
+    exec 'geA<ret><ret>Search Term: <esc>"/Pgei<ret><esc>"|p;'
 }
 map -docstring "run grep" global user g ":search<space>"
 
