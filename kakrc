@@ -35,6 +35,15 @@ define-command find -params 1 %{ edit %arg{1} }
 complete-command -menu find shell-script-candidates %{ fd }
 map -docstring "fuzzy find files" global user f ":find<space>"
 
+# grep and dump to scratch buffer
+define-command search -params 1 %{
+    echo %sh{echo "search term: $1"}
+    set-register | %sh{ grep -r $1 --line-number }
+    edit -scratch *grep-output*
+    exec '%d"|p;'
+}
+map -docstring "run grep" global user g ":search<space>"
+
 # disable insert hooks to stop it auto-commenting lines
 set-option global disabled_hooks .*-insert
 
