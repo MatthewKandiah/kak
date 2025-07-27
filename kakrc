@@ -73,12 +73,19 @@ hook -group lsp-filetype-odin global BufSetOption filetype=(?:odin) %{
     }
 }
 
+# lazygit popup
 define-command lazygit %{ nop %sh{
 	tmux popup -w 90% -h 90% -E -e kak_command_fifo=$kak_command_fifo lazygit
 }}
 declare-user-mode git
 map global user -docstring 'git mode' g ':enter-user-mode git<ret>'
 map global git -docstring 'open lazygit' l ':lazygit<ret>'
+
+# terminal popup (for file operations)
+define-command terminal-popup %{ nop %sh{
+  tmux popup -w 90% -h 90% -E
+}}
+map global user -docstring 'open terminal' t ':terminal-popup<ret>'
 
 # start -- tweaked simple-fzf.kak
 declare-user-mode sfzf
