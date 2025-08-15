@@ -1,26 +1,13 @@
-# Set the colour scheme
 colorscheme lucius
-
-# Width of a tab
 set-option global tabstop 2
-
-# Indent with 4 spaces
 set-option global indentwidth 2
-
-# Always keep 8 lines and 3 columns displayed
 set-option global scrolloff 8,3
-
-# Display the status bar on top
-set-option global ui_options ncurses_status_on_top=true
-
-# Display line numbers
 add-highlighter global/ number-lines -hlcursor
+add-highlighter global/ number-lines -relative
+add-highlighter global/ wrap -word -indent
 
 # Highlight trailing whitespace
 add-highlighter global/ regex \h+$ 0:Error
-
-# Softwrap long lines
-add-highlighter global/ wrap -word -indent
 
 # Clipboard management mappings
 map -docstring "yank the selection into the clipboard" global user y "<a-|> xsel --input --clipboard<ret>"
@@ -117,3 +104,29 @@ define-command -hidden sfzf-file %{ nop %sh{
 }}
 map global sfzf f ':sfzf-file<ret>' -docstring 'find file'
 # end -- simple-fzf.kak
+
+# keep history of visited files
+hook global WinDisplay .* %{
+  echo "Hello there %val{bufname}"
+  declare-option -hidden str mjk %val{bufname}
+  evaluate-commands -draft %{edit -scratch *buf-history*} # ensure buffer exists before writing to it
+  evaluate-commands -draft -buffer *buf-history* %{execute-keys "O%opt{mjk}"}
+}
+# fuzzy finder to open recent file
+## really want to make the first command -draft so we don't jump to the history buffer
+## but then we're in a context that quietly swallows our edit command!
+## not sure how to handle more nicely!
+define-command -hidden sfzf-recent-files %{
+  evaluate-commands %{
+    buffer *buf-history*
+		execute-keys '%'
+    nop %sh{
+      tmux popup -w 90% -h 90% -E -e kak_reg_dot="$kak_reg_dot" -e kak_command_fifo=$kak_command_fifo '
+        RESULT=$(echo $kak_reg_dot | sed "s/ /\n/g" | fzf)
+        echo "edit $RESULT" > $kak_command_fifo
+      '
+    }
+  }
+}
+map global sfzf . ':sfzf-recent-files<ret>' -docstring 'grep recent files'
+
