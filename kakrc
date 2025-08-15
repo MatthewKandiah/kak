@@ -107,7 +107,6 @@ map global sfzf f ':sfzf-file<ret>' -docstring 'find file'
 
 # keep history of visited files
 hook global WinDisplay .* %{
-  echo "Hello there %val{bufname}"
   declare-option -hidden str mjk %val{bufname}
   evaluate-commands -draft %{edit -scratch *buf-history*} # ensure buffer exists before writing to it
   evaluate-commands -draft -buffer *buf-history* %{execute-keys "O%opt{mjk}"}
